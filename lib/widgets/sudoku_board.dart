@@ -7,7 +7,12 @@ class SudokuBoard extends StatefulWidget {
   final int? selectedCell;
   final ValueChanged<int> onCellSelected;
 
-  const SudokuBoard({super.key, required this.grid, required this.selectedCell, required this.onCellSelected});
+  const SudokuBoard({
+    super.key,
+    required this.grid,
+    required this.selectedCell,
+    required this.onCellSelected,
+  });
 
   @override
   State<SudokuBoard> createState() => _SudokuBoardState();
@@ -30,9 +35,13 @@ class _SudokuBoardState extends State<SudokuBoard> {
         final value = widget.grid.cells[row][column];
         final isGiven = widget.grid.original[row][column] != null;
 
-        final isSelected = selectedCell == index;
-        final selectedRow = selectedCell == null ? null : selectedCell! ~/ 9;
-        final selectedColumn = selectedCell == null ? null : selectedCell! % 9;
+        final isSelected = widget.selectedCell == index;
+        final selectedRow = widget.selectedCell == null
+            ? null
+            : widget.selectedCell! ~/ 9;
+        final selectedColumn = widget.selectedCell == null
+            ? null
+            : widget.selectedCell! % 9;
 
         final isSameRow = selectedRow != null && row == selectedRow;
         final isSameColumn = selectedColumn != null && column == selectedColumn;
@@ -46,16 +55,7 @@ class _SudokuBoardState extends State<SudokuBoard> {
 
         return GestureDetector(
           onTap: () {
-            setState(() {
-              selectedCell = index;
-
-              final row = index ~/ 9;
-              final column = index % 9;
-
-              if (widget.grid.original[row][column] == null) {
-                widget.grid.setCell(row, column, 7);
-              }
-            });
+            widget.onCellSelected(index);
           },
           child: Container(
             decoration: BoxDecoration(
@@ -83,7 +83,11 @@ class _SudokuBoardState extends State<SudokuBoard> {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: isGiven ? FontWeight.bold : FontWeight.normal,
-                  color: isGiven ? Colors.black : Colors.blue,
+                  color: isGiven
+                      ? Colors.black
+                      : widget.grid.incorrect[row][column]
+                          ? Colors.red
+                          : Colors.blue,
                 ),
               ),
             ),

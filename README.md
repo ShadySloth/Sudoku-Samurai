@@ -1,4 +1,4 @@
-# sudoku_samurai
+# Sudoku Samurai
 
 Another sudoku game.
 
