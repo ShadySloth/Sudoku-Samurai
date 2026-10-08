@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 
 class NumberPad extends StatelessWidget {
   final ValueChanged<int> onNumberSelected;
-  final VoidCallback onClear;
 
   const NumberPad({
     super.key,
     required this.onNumberSelected,
-    required this.onClear
   });
 
   @override
@@ -31,12 +29,6 @@ class NumberPad extends StatelessWidget {
           ),
         );
       }),
-        Padding(
-          padding: const EdgeInsets.all(4),
-          child: ElevatedButton(
-              onPressed: onClear,
-              child: const Text('⌫'))
-        )
       ],
     );
   }

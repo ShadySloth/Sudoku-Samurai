@@ -51,6 +51,15 @@ class SudokuGrid {
     return true;
   }
 
+  void reset() {
+    for (int row = 0; row < 9; row++) {
+      for (int column = 0; column < 9; column++) {
+        cells[row][column] = original[row][column];
+        incorrect[row][column] = false;
+      }
+    }
+  }
+
   bool canPlaceNumber(int row, int column, int number) {
     for (int currentColumn = 0; currentColumn < 9; currentColumn++) {
       if (currentColumn == column) {
