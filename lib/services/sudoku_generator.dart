@@ -4,10 +4,7 @@ class SudokuGenerator {
   final Random _random = Random();
 
   List<List<int>> generateSolvedBoard() {
-    final board = List.generate(
-      9,
-        (_) => List.generate(9, (_) => 0),
-    );
+    final board = List.generate(9, (_) => List.generate(9, (_) => 0));
 
     _fillBoard(board);
 
@@ -24,11 +21,28 @@ class SudokuGenerator {
     final positions = List.generate(81, (index) => index);
     positions.shuffle(_random);
 
-    for (int i = 0; i < emptyCells && i < positions.length; i++) {
-      final row = positions[i] ~/ 9;
-      final column = positions[i] % 9;
+    int removed = 0;
 
+    for (final position in positions) {
+      if (removed >= emptyCells) {
+        break;
+      }
+
+      final row = position ~/ 9;
+      final column = position % 9;
+
+      final savedValue = puzzle[row][column]!;
       puzzle[row][column] = null;
+
+      final boardToCheck = puzzle.map(
+            (row) => row.map((value) => value ?? 0).toList(),
+      ).toList();
+
+      if (countSolutions(boardToCheck) == 1) {
+        removed++;
+      } else {
+        puzzle[row][column] = savedValue;
+      }
     }
 
     return puzzle;
@@ -81,8 +95,16 @@ class SudokuGenerator {
     final boxStartRow = (row ~/ 3) * 3;
     final boxStartColumn = (column ~/ 3) * 3;
 
-    for (int currentRow = boxStartRow; currentRow < boxStartRow + 3; currentRow++) {
-      for (int currentColumn = boxStartColumn; currentColumn < boxStartColumn + 3; currentColumn++) {
+    for (
+      int currentRow = boxStartRow;
+      currentRow < boxStartRow + 3;
+      currentRow++
+    ) {
+      for (
+        int currentColumn = boxStartColumn;
+        currentColumn < boxStartColumn + 3;
+        currentColumn++
+      ) {
         if (board[currentRow][currentColumn] == number) {
           return false;
         }
@@ -90,5 +112,54 @@ class SudokuGenerator {
     }
 
     return true;
+  }
+
+  int countSolutions(List<List<int>> board) {
+    int count = 0;
+
+    void solve() {
+      if (count >= 2) {
+        return;
+      }
+
+      int? emptyRow;
+      int? emptyColumn;
+
+      for (int row = 0; row < 9; row++) {
+        for (int column = 0; column < 9; column++) {
+          if (board[row][column] == 0) {
+            emptyRow = row;
+            emptyColumn = column;
+            break;
+          }
+        }
+
+        if (emptyRow != null) {
+          break;
+        }
+      }
+
+      if (emptyRow == null) {
+        count++;
+        return;
+      }
+
+      for (int number = 1; number <= 9; number++) {
+        if (!_canPlaceNumber(board, emptyRow, emptyColumn!, number)) {
+          continue;
+        }
+
+        board[emptyRow][emptyColumn] = number;
+        solve();
+        board[emptyRow][emptyColumn] = 0;
+
+        if (count >= 2) {
+          return;
+        }
+      }
+    }
+
+    solve();
+    return count;
   }
 }

@@ -41,11 +41,25 @@ class _HomeScreenState extends State<HomeScreen> {
   int mistakes = 0;
   int elapsedSeconds = 0;
   Timer? gameTimer;
+  String difficulty = 'Medium';
+
+  int get emptyCellsForDifficulty {
+    switch (difficulty) {
+      case 'Easy':
+        return 30;
+      case 'Medium':
+        return 40;
+      case 'Hard':
+        return 50;
+      default:
+        return 40;
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    grid = SudokuGrid.fromGeneratedPuzzle();
+    grid = SudokuGrid.fromGeneratedPuzzle(emptyCells: emptyCellsForDifficulty);
   }
 
   @override
@@ -87,15 +101,8 @@ class _HomeScreenState extends State<HomeScreen> {
           actions: [
             TextButton(
               onPressed: () {
-                setState(() {
-                  grid = SudokuGrid.fromGeneratedPuzzle();
-                  selectedCell = null;
-                  moves = 0;
-                  mistakes = 0;
-                  elapsedSeconds = 0;
-                });
-
                 Navigator.of(context).pop();
+                startNewGame();
               },
               child: const Text('New Game'),
             ),
@@ -105,10 +112,62 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void startNewGame() {
+    gameTimer?.cancel();
+    gameTimer = null;
+
+    setState(() {
+      grid = SudokuGrid.fromGeneratedPuzzle(emptyCells: emptyCellsForDifficulty);
+      selectedCell = null;
+      moves = 0;
+      mistakes = 0;
+      elapsedSeconds = 0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: const Text('Sudoku'),
+        centerTitle: true,
+        actions: [
+          PopupMenuButton<String>(
+            tooltip: 'Difficulty',
+            initialValue: difficulty,
+            onSelected: (value) {
+              setState(() {
+                difficulty = value;
+              });
+            },
+            itemBuilder: (context) => const [
+              PopupMenuItem(
+                value: 'Easy',
+                child: Text('Easy'),
+              ),
+              PopupMenuItem(
+                value: 'Medium',
+                child: Text('Medium'),
+              ),
+              PopupMenuItem(
+                value: 'Hard',
+                child: Text('Hard'),
+              ),
+            ],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Center(
+                child: Text(difficulty),
+              ),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            tooltip: 'New Game',
+            onPressed: startNewGame,
+          )
+        ],
+      ),
       body: Column(
         children: [
           Padding(
