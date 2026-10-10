@@ -34,7 +34,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final SudokuGrid grid = SudokuGrid.example();
+  late SudokuGrid grid;
 
   int? selectedCell;
   int moves = 0;
@@ -45,6 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    grid = SudokuGrid.fromGeneratedPuzzle();
   }
 
   @override
@@ -87,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  grid.reset();
+                  grid = SudokuGrid.fromGeneratedPuzzle();
                   selectedCell = null;
                   moves = 0;
                   mistakes = 0;

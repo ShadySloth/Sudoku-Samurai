@@ -1,3 +1,5 @@
+import '../services/sudoku_generator.dart';
+
 class SudokuGrid {
   final List<List<int?>> cells;
   final List<List<int?>> original;
@@ -105,6 +107,21 @@ class SudokuGrid {
     }
 
     return true;
+  }
+
+  factory SudokuGrid.fromGeneratedPuzzle() {
+    final generator = SudokuGenerator();
+    final puzzle = generator.generatePuzzle();
+
+    final original = puzzle.map((row) => [...row]).toList();
+
+    final incorrect = List.generate(9, (_) => List.generate(9, (_) => false));
+
+    return SudokuGrid(
+      cells: puzzle.map((row) => [...row]).toList(),
+      original: original,
+      incorrect: incorrect,
+    );
   }
 
   factory SudokuGrid.example() {
