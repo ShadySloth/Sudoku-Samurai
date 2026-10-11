@@ -3,10 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'models/sudoku_grid.dart';
+import 'services/sudoku_generator.dart';
 import 'widgets/sudoku_board.dart';
 import 'widgets/number_pad.dart';
 
 void main() {
+  SudokuGenerator().testSolver();
+
   runApp(const SudokuApp());
 }
 
@@ -59,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    grid = SudokuGrid.fromGeneratedPuzzle(emptyCells: emptyCellsForDifficulty);
+    grid = SudokuGrid.fromGeneratedPuzzle(difficulty: difficulty);
   }
 
   @override
@@ -117,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
     gameTimer = null;
 
     setState(() {
-      grid = SudokuGrid.fromGeneratedPuzzle(emptyCells: emptyCellsForDifficulty);
+      grid = SudokuGrid.fromGeneratedPuzzle(difficulty: difficulty);
       selectedCell = null;
       moves = 0;
       mistakes = 0;

@@ -109,9 +109,9 @@ class SudokuGrid {
     return true;
   }
 
-  factory SudokuGrid.fromGeneratedPuzzle({int emptyCells = 40}) {
+  factory SudokuGrid.fromGeneratedPuzzle({String difficulty = 'Medium'}) {
     final generator = SudokuGenerator();
-    final puzzle = generator.generatePuzzle(emptyCells: emptyCells);
+    final puzzle = generator.generatePuzzle(difficulty: difficulty);
 
     final original = puzzle.map((row) => [...row]).toList();
 
